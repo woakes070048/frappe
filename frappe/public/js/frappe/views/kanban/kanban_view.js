@@ -3,6 +3,8 @@ import KanbanSettings from "./kanban_settings";
 frappe.provide("frappe.views");
 
 frappe.views.KanbanView = class KanbanView extends frappe.views.ListView {
+	static full_page = true;
+
 	static load_last_view() {
 		const route = frappe.get_route();
 		if (route.length === 3) {
@@ -136,10 +138,13 @@ frappe.views.KanbanView = class KanbanView extends frappe.views.ListView {
 		this.hide_card_layout = true;
 		this.hide_sort_selector = true;
 		super.setup_page();
+
+		this.page.disable_sidebar_toggle = true;
+		this.page.setup_sidebar_toggle();
 	}
 
 	setup_view() {
-		if (this.board.columns.length > 5) {
+		if (this.board.columns.filter((col) => col.status !== "Archived").length > 4) {
 			this.page.container.addClass("full-width");
 		}
 		this.setup_realtime_updates();
